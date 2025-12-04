@@ -1,0 +1,2 @@
+# Cloud-Burst-and-Land-Slide-Prediction-and-Management-System
+build an AI-powered early-warning system that (A) identifies short-term extreme rainfall / cloudburst risk at high spatial resolution, and (B) predicts/flags landslide susceptibility and imminent landslide occurrence in vulnerable catchments —combining meteorological time-series, remote sensing and geospatial features to generate actionable alerts.
