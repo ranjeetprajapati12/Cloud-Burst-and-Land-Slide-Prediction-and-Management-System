@@ -1,0 +1,3 @@
+model_type: RandomForestClassifier
+auroc_test: 0.9948
+notes: synthetic dataset for demo only

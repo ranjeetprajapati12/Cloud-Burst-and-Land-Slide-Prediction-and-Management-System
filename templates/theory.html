@@ -1,0 +1,67 @@
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"><title>Theory — Cloudburst & Landslide Prediction</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: Arial, sans-serif; padding:20px; line-height:1.6; max-width:900px; margin:auto; }
+    header { text-align:center; }
+    pre { background:#f6f8fa; padding:12px; border-radius:6px; overflow:auto; }
+    .section { margin-bottom:18px; }
+  </style>
+</head>
+<body>
+  <header><h1>Theory & Model Explanation</h1></header>
+  <div class="section">
+    <h2>What is a cloudburst?</h2>
+    <p>A <strong>cloudburst</strong> is an extreme amount of precipitation in a short period of time, often localized over a small area. It can lead to rapid runoff, flash floods, and can trigger landslides on vulnerable slopes.</p>
+  </div>
+
+  <div class="section">
+    <h2>Why do landslides occur?</h2>
+    <p>Landslides happen when gravitational forces on slope materials overcome resisting forces. Common triggers include:</p>
+    <ul>
+      <li>Intense or prolonged rainfall (increases pore pressure and reduces soil shear strength)</li>
+      <li>Steep slopes</li>
+      <li>Loss of vegetation (reduces root reinforcement)</li>
+      <li>Soil saturation and changes in groundwater</li>
+      <li>Earthquakes or human activity (excavation, loading)</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>Model used in this demo</h2>
+    <p>This demo uses a <strong>Random Forest classifier</strong> trained on a <em>synthetic</em> dataset (generated for demonstration only). Features included:</p>
+    <ol>
+      <li><code>rainfall_mm</code> — intensity of the event</li>
+      <li><code>antecedent_rain_7d</code> — recent rainfall accumulation</li>
+      <li><code>slope_deg</code> — steepness of terrain</li>
+      <li><code>soil_moisture</code> — relative soil wetness (0-1)</li>
+      <li><code>ndvi</code> — vegetation index (-1 to 1)</li>
+      <li><code>dist_river_km</code> — proximity to river (km)</li>
+    </ol>
+    <p><strong>Important:</strong> This is a proof-of-concept. For operational systems you should use real historical landslide inventories, high-resolution rainfall and soil data, and conduct proper validation, bias analysis, and uncertainty quantification.</p>
+  </div>
+
+  <div class="section">
+    <h2>How to improve this system</h2>
+    <ul>
+      <li>Use real labeled landslide event datasets (satellite-detected or field-surveyed).</li>
+      <li>Integrate high-resolution meteorological nowcasts and radar-derived rainfall.</li>
+      <li>Include geotechnical layers: soil type, depth, permeability.</li>
+      <li>Use spatial models (e.g. geostatistics, convolutional neural nets on raster inputs).</li>
+      <li>Deploy in the cloud with automated data pipelines and monitoring.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>References & further reading</h2>
+    <ul>
+      <li>IPCC and regional hydrology reports</li>
+      <li>Research on rainfall thresholds for landslides</li>
+      <li>Standard remote sensing resources on NDVI and soil moisture</li>
+    </ul>
+  </div>
+</body>
+</html>

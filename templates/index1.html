@@ -1,0 +1,95 @@
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Cloudburst & Landslide Prediction</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+    header { background:#2c3e50; color:#fff; padding:12px; text-align:center; }
+    #map { height: 60vh; }
+    .controls { padding:12px; display:flex; gap:12px; flex-wrap:wrap; }
+    .card { background:#fff; padding:12px; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.1); }
+    label { font-weight:600; font-size:0.9rem; }
+    input[type=number] { width:120px; }
+    footer { padding:8px; text-align:center; font-size:0.9rem; color:#666; }
+  </style>
+</head>
+<body>
+  <header><h1>Cloudburst & Landslide Prediction — Local Demo</h1></header>
+  <div id="map"></div>
+  <div class="controls">
+    <div class="card">
+      <h3>Input (click on map to set coords)</h3>
+      <div><label>Latitude:</label> <span id="lat">--</span></div>
+      <div><label>Longitude:</label> <span id="lon">--</span></div>
+    </div>
+    <div class="card">
+      <h3>Meteorological / Geo Inputs</h3>
+      <div><label>Rainfall (mm):</label> <input id="rainfall" type="number" value="80" step="1"></div>
+      <div><label>Slope (deg):</label> <input id="slope" type="number" value="25" step="0.1"></div>
+      <div><label>Soil moisture (0-1):</label> <input id="soil" type="number" value="0.4" step="0.01" min="0" max="1"></div>
+      <div><label>NDVI (-1 to 1):</label> <input id="ndvi" type="number" value="0.35" step="0.01" min="-1" max="1"></div>
+      <div><label>Dist to river (km):</label> <input id="dist" type="number" value="1.2" step="0.1"></div>
+      <div style="margin-top:8px;"><button id="predictBtn">Predict Risk</button> <a href="/theory" target="_blank">Theory & Model</a></div>
+    </div>
+    <div class="card" id="resultCard">
+      <h3>Prediction</h3>
+      <div id="resultText">No prediction yet.</div>
+      <div id="featureDump" style="font-size:0.9rem; color:#555; margin-top:8px;"></div>
+    </div>
+  </div>
+  <footer>Built for demo — model trained on synthetic data. Not for operational use.</footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    const map = L.map('map').setView([26.8, 75.8], 7);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    let marker = null;
+    map.on('click', function(e) {
+      const {lat, lng} = e.latlng;
+      if (marker) marker.setLatLng(e.latlng);
+      else marker = L.marker(e.latlng).addTo(map);
+      document.getElementById('lat').innerText = lat.toFixed(5);
+      document.getElementById('lon').innerText = lng.toFixed(5);
+    });
+
+    async function predict() {
+      const payload = {
+        rainfall_mm: parseFloat(document.getElementById('rainfall').value),
+        slope_deg: parseFloat(document.getElementById('slope').value),
+        soil_moisture: parseFloat(document.getElementById('soil').value),
+        ndvi: parseFloat(document.getElementById('ndvi').value),
+        dist_river_km: parseFloat(document.getElementById('dist').value)
+      };
+      document.getElementById('resultText').innerText = "Predicting...";
+      try {
+        const res = await fetch('/predict', {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.error) {
+          document.getElementById('resultText').innerText = "Error: " + data.error;
+        } else {
+          const p = data.probability;
+          const label = data.label ? 'High risk' : 'Low/Moderate risk';
+          document.getElementById('resultText').innerHTML = `<strong>${label}</strong><br/>Probability: ${(p*100).toFixed(1)}%`;
+          document.getElementById('featureDump').innerText = JSON.stringify(data.features, null, 2);
+        }
+      } catch (err) {
+        document.getElementById('resultText').innerText = "Request failed: " + err;
+      }
+    }
+
+    document.getElementById('predictBtn').addEventListener('click', predict);
+  </script>
+</body>
+</html>
